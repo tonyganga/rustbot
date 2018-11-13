@@ -15,6 +15,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+// RustServer represents the information returned from /info/{id}
 type RustServer struct {
 	Hostname              string `json:"hostname"`
 	IP                    string `json:"ip"`
@@ -74,7 +75,7 @@ func main() {
 		return
 	}
 
-	// Don't finish main goroutine until some sort of system term is recieved on the sc channel.
+	// Don't finish main goroutine until some sort of system term is received on the sc channel.
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
@@ -105,7 +106,7 @@ func lookupLowPop(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		checkQueue(server.PlayersCurrent, server.PlayersMax, &server)
 
-		// Create embeded message with the server information (queue, connection info, etc)
+		// Create embedded message with the server information (queue, connection info, etc)
 		// based on some conditions, like if a queue exists and if the server is online or not.
 		if server.Queue == true && server.OnlineState == "1" {
 			line := strconv.Itoa(server.QueueLine)
@@ -115,12 +116,12 @@ func lookupLowPop(s *discordgo.Session, m *discordgo.MessageCreate) {
 				Color:       0xff0000, // Red
 				Description: "Sucks. There's a queue of " + line + " for " + server.Hostname,
 				Fields: []*discordgo.MessageEmbedField{
-					&discordgo.MessageEmbedField{
+					{
 						Name:   "Server Information:",
-						Value:  "Wipe: " + server.Wipe + "\nMode: " + server.ServerMode + "\nAverage FPS: " + server.FPSAverage,
+						Value:  "Wipe: " + server.Wipe + "\nMode: " + server.ServerMode + "\nAverage FPS: " + server.FPSAverage + "\nPlayers Online: " + server.PlayersCurrent,
 						Inline: true,
 					},
-					&discordgo.MessageEmbedField{
+					{
 						Name:   "Connection String:",
 						Value:  "```client.connect " + server.IP + ":" + server.Port + "```",
 						Inline: true,
@@ -144,12 +145,12 @@ func lookupLowPop(s *discordgo.Session, m *discordgo.MessageCreate) {
 				Color:       0x00ff00, // Green
 				Description: "There's NO queue! Leggo zerg! :100:",
 				Fields: []*discordgo.MessageEmbedField{
-					&discordgo.MessageEmbedField{
+					{
 						Name:   "Server Information:",
-						Value:  "Wipe: " + server.Wipe + "\nMode: " + server.ServerMode + "\nAverage FPS: " + server.FPSAverage,
+						Value:  "Wipe: " + server.Wipe + "\nMode: " + server.ServerMode + "\nAverage FPS: " + server.FPSAverage + "\nPlayers Online: " + server.PlayersCurrent,
 						Inline: true,
 					},
-					&discordgo.MessageEmbedField{
+					{
 						Name:   "Connection Info:",
 						Value:  "```client.connect " + server.IP + ":" + server.Port + "```",
 						Inline: true,
