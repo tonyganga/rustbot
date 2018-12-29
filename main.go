@@ -66,7 +66,7 @@ func main() {
 	}
 
 	// Register handlers
-	dg.AddHandler(lookupLowPop)
+	dg.AddHandler(incomingMessageHandler)
 
 	// Open a websocket connection to Discord and begin listening.
 	err = dg.Open()
@@ -85,106 +85,92 @@ func main() {
 	defer dg.Close()
 }
 
-func lookupLowPop(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if m.Content == "!lowpop" {
+func incomingMessageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
-		// this just checks 50 lowpop
-		// @TODO make this lookup the ID first and refactor to work
-		res, err := http.Get("https://api.rust-servers.info/info/50")
-		if err != nil {
-			log.Fatal(err)
-		}
-		// read body and unmarshal it into the RustServer struct
-		info, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			log.Fatal(err)
-		}
-		res.Body.Close()
-
-		var server RustServer
-		json.Unmarshal(info, &server)
-
-		checkQueue(server.PlayersCurrent, server.PlayersMax, &server)
-
-		// Create embedded message with the server information (queue, connection info, etc)
-		// based on some conditions, like if a queue exists and if the server is online or not.
-		if server.Queue == true && server.OnlineState == "1" {
-			line := strconv.Itoa(server.QueueLine)
-
-			embed := &discordgo.MessageEmbed{
-				Author:      &discordgo.MessageEmbedAuthor{},
-				Color:       0xff0000, // Red
-				Description: "Sucks. There's a queue of " + line + " for " + server.Hostname,
-				Fields: []*discordgo.MessageEmbedField{
-					{
-						Name:   "Server Information:",
-						Value:  "Wipe: " + server.Wipe + "\nMode: " + server.ServerMode + "\nAverage FPS: " + server.FPSAverage + "\nPlayers Online: " + server.PlayersCurrent,
-						Inline: true,
-					},
-					{
-						Name:   "Connection String:",
-						Value:  "```client.connect " + server.IP + ":" + server.Port + "```",
-						Inline: true,
-					},
-				},
-				Image: &discordgo.MessageEmbedImage{
-					URL: server.Image,
-				},
-				Thumbnail: &discordgo.MessageEmbedThumbnail{
-					URL: "https://cdn.discordapp.com/avatars/119249192806776836/cc32c5c3ee602e1fe252f9f595f9010e.jpg?size=2048",
-				},
-				Timestamp: time.Now().Format(time.RFC3339),
-				Title:     server.Hostname,
+	switch m.Content {
+	case "!lowpop":
+		{
+			// this just checks 50 lowpop
+			// @TODO make this lookup the ID first and refactor to work
+			res, err := http.Get("https://api.rust-servers.info/info/50")
+			if err != nil {
+				log.Fatal(err)
 			}
-
-			s.ChannelMessageSendEmbed(m.ChannelID, embed)
-
-		} else if server.Queue == false && server.OnlineState == "1" {
-			embed := &discordgo.MessageEmbed{
-				Author:      &discordgo.MessageEmbedAuthor{},
-				Color:       0x00ff00, // Green
-				Description: "There's NO queue! Leggo zerg! :100:",
-				Fields: []*discordgo.MessageEmbedField{
-					{
-						Name:   "Server Information:",
-						Value:  "Wipe: " + server.Wipe + "\nMode: " + server.ServerMode + "\nAverage FPS: " + server.FPSAverage + "\nPlayers Online: " + server.PlayersCurrent,
-						Inline: true,
-					},
-					{
-						Name:   "Connection Info:",
-						Value:  "```client.connect " + server.IP + ":" + server.Port + "```",
-						Inline: true,
-					},
-				},
-				Image: &discordgo.MessageEmbedImage{
-					URL: server.Image,
-				},
-				Thumbnail: &discordgo.MessageEmbedThumbnail{
-					URL: "https://cdn.discordapp.com/avatars/119249192806776836/cc32c5c3ee602e1fe252f9f595f9010e.jpg?size=2048",
-				},
-				Timestamp: time.Now().Format(time.RFC3339),
-				Title:     server.Hostname,
+			// read body and unmarshal it into the RustServer struct
+			info, err := ioutil.ReadAll(res.Body)
+			if err != nil {
+				log.Fatal(err)
 			}
+			res.Body.Close()
 
-			s.ChannelMessageSendEmbed(m.ChannelID, embed)
+			var server RustServer
+			json.Unmarshal(info, &server)
 
-		} else if server.OnlineState == "0" {
-			embed := &discordgo.MessageEmbed{
-				Author:      &discordgo.MessageEmbedAuthor{},
-				Color:       0xff0000, // Red
-				Description: server.Hostname + " is down. :no_entry_sign: ",
-				Image: &discordgo.MessageEmbedImage{
-					URL: server.Image,
-				},
-				Thumbnail: &discordgo.MessageEmbedThumbnail{
-					URL: "https://cdn.discordapp.com/avatars/119249192806776836/cc32c5c3ee602e1fe252f9f595f9010e.jpg?size=2048",
-				},
-				Timestamp: time.Now().Format(time.RFC3339),
-				Title:     server.Hostname,
+			checkQueue(server.PlayersCurrent, server.PlayersMax, &server)
+
+			// Create embedded message with the server information (queue, connection info, etc)
+			// based on some conditions, like if a queue exists and if the server is online or not.
+			switch server.Queue {
+			case true:
+				line := strconv.Itoa(server.QueueLine)
+
+				embed := &discordgo.MessageEmbed{
+					Author:      &discordgo.MessageEmbedAuthor{},
+					Color:       0xff0000, // Red
+					Description: "Sucks. There's a queue of " + line + " for " + server.Hostname,
+					Fields: []*discordgo.MessageEmbedField{
+						{
+							Name:   "Server Information:",
+							Value:  "Wipe: " + server.Wipe + "\nMode: " + server.ServerMode + "\nAverage FPS: " + server.FPSAverage + "\nPlayers Online: " + server.PlayersCurrent,
+							Inline: true,
+						},
+						{
+							Name:   "Connection String:",
+							Value:  "```client.connect " + server.IP + ":" + server.Port + "```",
+							Inline: true,
+						},
+					},
+					Image: &discordgo.MessageEmbedImage{
+						URL: server.Image,
+					},
+					Thumbnail: &discordgo.MessageEmbedThumbnail{
+						URL: "https://cdn.discordapp.com/avatars/119249192806776836/cc32c5c3ee602e1fe252f9f595f9010e.jpg?size=2048",
+					},
+					Timestamp: time.Now().Format(time.RFC3339),
+					Title:     server.Hostname,
+				}
+
+				s.ChannelMessageSendEmbed(m.ChannelID, embed)
+
+			case false:
+				embed := &discordgo.MessageEmbed{
+					Author:      &discordgo.MessageEmbedAuthor{},
+					Color:       0x00ff00, // Green
+					Description: "There's NO queue! Leggo zerg! :100:",
+					Fields: []*discordgo.MessageEmbedField{
+						{
+							Name:   "Server Information:",
+							Value:  "Wipe: " + server.Wipe + "\nMode: " + server.ServerMode + "\nAverage FPS: " + server.FPSAverage + "\nPlayers Online: " + server.PlayersCurrent,
+							Inline: true,
+						},
+						{
+							Name:   "Connection Info:",
+							Value:  "```client.connect " + server.IP + ":" + server.Port + "```",
+							Inline: true,
+						},
+					},
+					Image: &discordgo.MessageEmbedImage{
+						URL: server.Image,
+					},
+					Thumbnail: &discordgo.MessageEmbedThumbnail{
+						URL: "https://cdn.discordapp.com/avatars/119249192806776836/cc32c5c3ee602e1fe252f9f595f9010e.jpg?size=2048",
+					},
+					Timestamp: time.Now().Format(time.RFC3339),
+					Title:     server.Hostname,
+				}
+
+				s.ChannelMessageSendEmbed(m.ChannelID, embed)
 			}
-
-			s.ChannelMessageSendEmbed(m.ChannelID, embed)
-
 		}
 	}
 }
