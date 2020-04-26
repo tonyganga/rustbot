@@ -18,71 +18,63 @@ Yep. That's it. You should see the following output:
 
 ```
 docker build -t rustbot:latest .
-Sending build context to Docker daemon  586.8kB
-Step 1/19 : FROM golang:alpine as builder
- ---> 95ec94706ff6
-Step 2/19 : RUN apk update && apk add git && apk add ca-certificates
+Sending build context to Docker daemon  25.94MB
+Step 1/16 : FROM golang:alpine as builder
+ ---> ccda0e5ccbfc
+Step 2/16 : RUN apk update && apk add git && apk add ca-certificates
  ---> Using cache
- ---> 54d6a21f447e
-Step 3/19 : ADD https://github.com/golang/dep/releases/download/v0.4.1/dep-linux-amd64 /usr/bin/dep
-Downloading [==================================================>]  8.499MB/8.499MB
+ ---> 4cbc84ad9250
+Step 3/16 : RUN adduser -D -g '' rustbot
  ---> Using cache
- ---> 45228515a4fa
-Step 4/19 : RUN chmod +x /usr/bin/dep
- ---> Using cache
- ---> 651fe51ce825
-Step 5/19 : RUN adduser -D -g '' rustbot
- ---> Using cache
- ---> 0aac8e7dd146
-Step 6/19 : COPY . $GOPATH/src/rust-discord-bot/
- ---> 29c8e35b23f1
-Step 7/19 : WORKDIR $GOPATH/src/rust-discord-bot/
- ---> Running in 3d5df20a76ed
-Removing intermediate container 3d5df20a76ed
- ---> dd6322beb620
-Step 8/19 : ENV CGO_ENABLED 0
- ---> Running in 4d6a29d41215
-Removing intermediate container 4d6a29d41215
- ---> e1d053ec8107
-Step 9/19 : ENV GOOS linux
- ---> Running in 0c076e6bc611
-Removing intermediate container 0c076e6bc611
- ---> 3ca3851c5f60
-Step 10/19 : ENV GOARCH amd64
- ---> Running in 29e7b34a83f2
-Removing intermediate container 29e7b34a83f2
- ---> 0f423e95c71a
-Step 11/19 : RUN dep ensure --vendor-only
- ---> Running in 8418e9861d00
-Removing intermediate container 8418e9861d00
- ---> b28936807e04
-Step 12/19 : RUN go test -v
- ---> Running in 574bf474d0b9
-?   	rust-discord-bot	[no test files]
-Removing intermediate container 574bf474d0b9
- ---> 6d1f56603c21
-Step 13/19 : RUN go build -a -installsuffix cgo -o /go/bin/rust-discord-bot
- ---> Running in f0123d597465
-Removing intermediate container f0123d597465
- ---> 4b4a3b78efe2
-Step 14/19 : FROM scratch
+ ---> 6fbf010edcca
+Step 4/16 : COPY . $GOPATH/src/rust-discord-bot/
+ ---> c3f5e109a13a
+Step 5/16 : WORKDIR $GOPATH/src/rust-discord-bot/
+ ---> Running in 2a8925b49638
+Removing intermediate container 2a8925b49638
+ ---> a4f08757641d
+Step 6/16 : ENV CGO_ENABLED 0
+ ---> Running in a7fbacfca472
+Removing intermediate container a7fbacfca472
+ ---> fe7d5ef560f0
+Step 7/16 : ENV GOOS linux
+ ---> Running in 2f3af266c8db
+Removing intermediate container 2f3af266c8db
+ ---> db5a9da06e7c
+Step 8/16 : ENV GOARCH amd64
+ ---> Running in 232e826104b2
+Removing intermediate container 232e826104b2
+ ---> 4f38e4899d19
+Step 9/16 : RUN go test -v
+ ---> Running in 26e0de5cf9d5
+go: downloading github.com/bwmarrin/discordgo v0.19.0
+go: downloading github.com/gorilla/websocket v1.4.0
+go: downloading golang.org/x/crypto v0.0.0-20181112202954-3d3f9f413869
+?       github.com/tonyganga/rustbot    [no test files]
+Removing intermediate container 26e0de5cf9d5
+ ---> 1a0b11087a70
+Step 10/16 : RUN go build -a -installsuffix cgo -o /go/bin/rust-discord-bot
+ ---> Running in 94fcf9cf492a
+Removing intermediate container 94fcf9cf492a
+ ---> 075955d5686d
+Step 11/16 : FROM scratch
  ---> 
-Step 15/19 : COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+Step 12/16 : COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
  ---> Using cache
- ---> e569bd5eff66
-Step 16/19 : COPY --from=builder /etc/passwd /etc/passwd
+ ---> 97433d6c14b4
+Step 13/16 : COPY --from=builder /etc/passwd /etc/passwd
  ---> Using cache
- ---> cb4ee665795a
-Step 17/19 : COPY --from=builder /go/bin/rust-discord-bot /go/bin/rust-discord-bot
+ ---> e08a169157b1
+Step 14/16 : COPY --from=builder /go/bin/rust-discord-bot /go/bin/rust-discord-bot
  ---> Using cache
- ---> 3732fad79fcd
-Step 18/19 : USER rustbot
+ ---> a58268dd4fb2
+Step 15/16 : USER rustbot
  ---> Using cache
- ---> b4f655e18993
-Step 19/19 : ENTRYPOINT ["/go/bin/rust-discord-bot"]
+ ---> c7726cfd5502
+Step 16/16 : ENTRYPOINT ["/go/bin/rust-discord-bot"]
  ---> Using cache
- ---> 2955612b828a
-Successfully built 2955612b828a
+ ---> 985c2251c740
+Successfully built 985c2251c740
 Successfully tagged rustbot:latest
 ```
 
