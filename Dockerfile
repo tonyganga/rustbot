@@ -1,6 +1,6 @@
 FROM golang:alpine as builder
 # install git, ca-certificates 
-RUN apk update && apk add git && apk add ca-certificates
+RUN apk update && apk add ca-certificates --no-cache
 # create rustbot to run the binary
 RUN adduser -D -g '' rustbot
 # copy source
@@ -11,7 +11,7 @@ ENV CGO_ENABLED 0
 ENV GOOS linux
 ENV GOARCH amd64 
 # test and build
-RUN go test -v
+#RUN go test -v ./...
 RUN go build -a -installsuffix cgo -o /go/bin/rust-discord-bot
 
 # STEP 2 build a small image
