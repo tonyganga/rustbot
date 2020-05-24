@@ -4,5 +4,5 @@ go 1.14
 
 require (
 	github.com/bwmarrin/discordgo v0.19.0
-	golang.org/x/crypto v0.0.0-20181112202954-3d3f9f413869 // indirect
+	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550 // indirect
 )

@@ -37,7 +37,7 @@ func main() {
 	// Don't finish main goroutine until some sort of system term is received on the sc channel.
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-sc
 
 	// Defer to close the Discord session at the end of the main goroutine.

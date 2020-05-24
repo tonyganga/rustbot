@@ -32,7 +32,10 @@ func rustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// send default help message when only keyword is provided
 	if m.Content == BOT_KEYWORD {
-		s.ChannelMessageSendEmbed(m.ChannelID, infoMessage())
+		_, err := s.ChannelMessageSendEmbed(m.ChannelID, infoMessage())
+		if err != nil {
+			log.Fatal(err)
+		}
 		return
 	}
 
@@ -40,7 +43,10 @@ func rustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	case "top":
 		{
 			ids := getRankedRustServerList()
-			s.ChannelMessageSend(m.ChannelID, getListOfRustServerIds(ids))
+			_, err := s.ChannelMessageSend(m.ChannelID, getListOfRustServerIds(ids))
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	case "server":
 		// !rustbot server [id]
@@ -51,20 +57,32 @@ func rustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 				log.Fatal(err)
 			}
 			if !match {
-				s.ChannelMessageSend(m.ChannelID, "That doesn't look like a valid server ID.")
+				_, err := s.ChannelMessageSend(m.ChannelID, "That doesn't look like a valid server ID.")
+				if err != nil {
+					log.Fatal(err)
+				}
 				return
 			}
 
 			server := getRustServer(id)
-			s.ChannelMessageSendEmbed(m.ChannelID, server.rustServerMessage())
+			_, err = s.ChannelMessageSendEmbed(m.ChannelID, server.rustServerMessage())
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	case "commits":
 		{
-			s.ChannelMessageSend(m.ChannelID, "https://rust.facepunch.com/changes/1")
+			_, err := s.ChannelMessageSend(m.ChannelID, "https://rust.facepunch.com/changes/1")
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	case "help":
 		{
-			s.ChannelMessageSend(m.ChannelID, helpMessage())
+			_, err := s.ChannelMessageSend(m.ChannelID, helpMessage())
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 }

@@ -201,7 +201,10 @@ func getRustServer(id string) RustServer {
 	defer res.Body.Close()
 
 	var servers RustServer
-	json.Unmarshal(info, &servers)
+	err = json.Unmarshal(info, &servers)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return servers
 }
 
@@ -222,7 +225,10 @@ func getRankedRustServerList() map[string]string {
 	defer res.Body.Close()
 
 	var list ServerList
-	json.Unmarshal(info, &list)
+	err = json.Unmarshal(info, &list)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	for _, v := range list.Data {
 		results[v.Attributes.Name] = v.Attributes.ID

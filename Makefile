@@ -6,7 +6,10 @@ clean:
 env:
 	go env
 
-build: env
+build: env lint
 	docker build -t rustbot:latest .
+
+lint:
+	golangci-lint run
 
 .PHONY: clean env test build
