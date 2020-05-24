@@ -1,4 +1,4 @@
-package main
+package commands
 
 import (
 	"fmt"
@@ -7,13 +7,14 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/tonyganga/rustbot/battlemetrics"
 )
 
 const (
 	BOT_KEYWORD = "!rustbot"
 )
 
-func rustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
+func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// ignore bot messages
 	if m.Author.Bot {
 		return
@@ -42,8 +43,8 @@ func rustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	switch sc[1] {
 	case "top":
 		{
-			ids := getRankedRustServerList()
-			_, err := s.ChannelMessageSend(m.ChannelID, getListOfRustServerIds(ids))
+			ids := battlemetrics.GetRankedRustServerList()
+			_, err := s.ChannelMessageSend(m.ChannelID, battlemetrics.GetListOfRustServerIds(ids))
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -64,8 +65,8 @@ func rustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 				return
 			}
 
-			server := getRustServer(id)
-			_, err = s.ChannelMessageSendEmbed(m.ChannelID, server.rustServerMessage())
+			server := battlemetrics.GetRustServer(id)
+			_, err = s.ChannelMessageSendEmbed(m.ChannelID, server.RustServerMessage())
 			if err != nil {
 				log.Fatal(err)
 			}

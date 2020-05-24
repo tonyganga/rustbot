@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/tonyganga/rustbot/commands"
 )
 
 func main() {
@@ -25,7 +26,7 @@ func main() {
 	}
 
 	// Register handlers
-	dg.AddHandler(rustHandler)
+	dg.AddHandler(commands.RustHandler)
 
 	// Open a websocket connection to Discord and begin listening.
 	err = dg.Open()

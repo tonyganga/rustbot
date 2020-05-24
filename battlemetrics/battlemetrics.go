@@ -1,4 +1,4 @@
-package main
+package battlemetrics
 
 import (
 	"encoding/json"
@@ -141,7 +141,7 @@ type RustServer struct {
 	Included []interface{} `json:"included"`
 }
 
-func (r *RustServer) rustServerMessage() *discordgo.MessageEmbed {
+func (r *RustServer) RustServerMessage() *discordgo.MessageEmbed {
 	return &discordgo.MessageEmbed{
 		Title:       r.Data.Attributes.Name,
 		Description: r.Data.Attributes.Details.RustDescription,
@@ -185,7 +185,7 @@ func (r *RustServer) rustServerMessage() *discordgo.MessageEmbed {
 	}
 }
 
-func getRustServer(id string) RustServer {
+func GetRustServer(id string) RustServer {
 
 	url := fmt.Sprintf("%s/servers/%s", BattleMetricsURL, id)
 	fmt.Println(url)
@@ -208,7 +208,7 @@ func getRustServer(id string) RustServer {
 	return servers
 }
 
-func getRankedRustServerList() map[string]string {
+func GetRankedRustServerList() map[string]string {
 
 	results := make(map[string]string)
 	url := fmt.Sprintf("%v/servers%v%v", BattleMetricsURL, RustFilter, PageFilter)
@@ -237,7 +237,7 @@ func getRankedRustServerList() map[string]string {
 	return results
 }
 
-func getListOfRustServerIds(ids map[string]string) string {
+func GetListOfRustServerIds(ids map[string]string) string {
 
 	var message string
 	ticks := "```"
