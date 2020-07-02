@@ -13,6 +13,7 @@ import (
 
 const BattleMetricsURL = "https://api.battlemetrics.com"
 const RustFilter = "?filter[game]=rust"
+const CountryFilter = "&filter[countries][0]=US"
 const PageFilter = "&page[size]=25"
 
 type ServerList struct {
@@ -211,7 +212,7 @@ func GetRustServer(id string) RustServer {
 func GetRankedRustServerList() map[string]string {
 
 	results := make(map[string]string)
-	url := fmt.Sprintf("%v/servers%v%v", BattleMetricsURL, RustFilter, PageFilter)
+	url := fmt.Sprintf("%v/servers%v%v%v", BattleMetricsURL, RustFilter, CountryFilter, PageFilter)
 	fmt.Println(url)
 	res, err := http.Get(url)
 	if err != nil {

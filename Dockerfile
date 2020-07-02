@@ -1,9 +1,3 @@
-FROM golangci/golangci-lint as ci
-COPY . $GOPATH/src/rust-discord-bot/
-WORKDIR $GOPATH/src/rust-discord-bot/
-RUN golangci-lint run 
-RUN go test -race -v ./...
-
 FROM golang:alpine as builder
 RUN apk update && apk add ca-certificates --no-cache
 RUN adduser -D -g '' rustbot
