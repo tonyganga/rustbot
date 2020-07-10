@@ -163,8 +163,8 @@ func (r *RustServer) RustServerMessage() *discordgo.MessageEmbed {
 				Inline: false,
 			},
 			{
-				Name:   "Players Online",
-				Value:  fmt.Sprintf("%v/%v", r.Data.Attributes.Players, r.Data.Attributes.MaxPlayers),
+				Name:   "Players Online/Queue",
+				Value:  fmt.Sprintf("%v/%v (%v)", r.Data.Attributes.Players, r.Data.Attributes.MaxPlayers, r.Data.Attributes.Details.RustQueuedPlayers),
 				Inline: false,
 			},
 			{
