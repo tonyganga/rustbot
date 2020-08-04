@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -209,9 +210,9 @@ func GetRustServer(id string) RustServer {
 	return servers
 }
 
-func GetRankedRustServerList() map[string]string {
+func GetRankedRustServerList() map[int]string {
 
-	results := make(map[string]string)
+	results := make(map[int]string)
 	url := fmt.Sprintf("%v/servers%v%v%v", BattleMetricsURL, RustFilter, CountryFilter, PageFilter)
 	fmt.Println(url)
 	res, err := http.Get(url)
@@ -232,19 +233,25 @@ func GetRankedRustServerList() map[string]string {
 	}
 
 	for _, v := range list.Data {
-		results[v.Attributes.Name] = v.Attributes.ID
+		results[v.Attributes.Rank] = fmt.Sprintf("%v %v", v.Attributes.ID, v.Attributes.Name)
 	}
 
 	return results
 }
 
-func GetListOfRustServerIds(ids map[string]string) string {
+func GetListOfRustServerIds(ids map[int]string) string {
 
 	var message string
 	ticks := "```"
 
-	for k, v := range ids {
-		message += fmt.Sprintf("ID: %v Server: %v\n", v, k)
+	var keys []int
+	for k := range ids {
+		keys = append(keys, k)
+	}
+
+	sort.Ints(keys)
+	for _, v := range keys {
+		message += fmt.Sprintf("%v\n", ids[v])
 	}
 
 	return fmt.Sprintf("%v\n%v%v", ticks, message, ticks)
