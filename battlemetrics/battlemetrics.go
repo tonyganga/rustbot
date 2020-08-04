@@ -14,8 +14,9 @@ import (
 
 const BattleMetricsURL = "https://api.battlemetrics.com"
 const RustFilter = "?filter[game]=rust"
-const CountryFilter = "&filter[countries][0]=US"
+const CountryFilter = "&filter[countries][0]=US&filter[countries][1]=CA"
 const PageFilter = "&page[size]=25"
+const SearchFilter = "&filter[search]="
 
 type ServerList struct {
 	Data []struct {
@@ -180,7 +181,7 @@ func (r *RustServer) RustServerMessage() *discordgo.MessageEmbed {
 			},
 			{
 				Name:   "Connection Information",
-				Value:  fmt.Sprintf("%v:%v", r.Data.Attributes.IP, r.Data.Attributes.Port),
+				Value:  fmt.Sprintf("client.connect %v:%v", r.Data.Attributes.IP, r.Data.Attributes.Port),
 				Inline: false,
 			},
 		},
@@ -210,10 +211,11 @@ func GetRustServer(id string) RustServer {
 	return servers
 }
 
-func GetRankedRustServerList() map[int]string {
+func GetListOfRustServers(query string) map[int]string {
 
+	search := SearchFilter + query
 	results := make(map[int]string)
-	url := fmt.Sprintf("%v/servers%v%v%v", BattleMetricsURL, RustFilter, CountryFilter, PageFilter)
+	url := fmt.Sprintf("%v/servers%v%v%v%v", BattleMetricsURL, RustFilter, CountryFilter, PageFilter, search)
 	fmt.Println(url)
 	res, err := http.Get(url)
 	if err != nil {
@@ -239,7 +241,7 @@ func GetRankedRustServerList() map[int]string {
 	return results
 }
 
-func GetListOfRustServerIds(ids map[int]string) string {
+func GetRankedListOfRustServers(ids map[int]string) string {
 
 	var message string
 	ticks := "```"

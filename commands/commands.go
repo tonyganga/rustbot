@@ -43,15 +43,22 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	switch sc[1] {
 	case "top":
 		{
-			ids := battlemetrics.GetRankedRustServerList()
-			_, err := s.ChannelMessageSend(m.ChannelID, battlemetrics.GetListOfRustServerIds(ids))
+			ids := battlemetrics.GetListOfRustServers("")
+			_, err := s.ChannelMessageSend(m.ChannelID, battlemetrics.GetRankedListOfRustServers(ids))
 			if err != nil {
 				log.Fatal(err)
 			}
 		}
 	case "server":
+		if len(sc) == 2 {
+			_, err := s.ChannelMessageSend(m.ChannelID, "No options passed to !rustbot server.")
+			if err != nil {
+				log.Fatal(err)
+			}
+			return
+		}
 		// !rustbot server [id]
-		if len(sc) >= 2 {
+		if len(sc) > 2 {
 			id := sc[2]
 			match, err := regexp.MatchString(`^[0-9]+$`, id)
 			if err != nil {
@@ -73,7 +80,34 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	case "commits":
 		{
-			_, err := s.ChannelMessageSend(m.ChannelID, "https://rust.facepunch.com/changes/1")
+			_, err := s.ChannelMessageSend(m.ChannelID, "https://commits.facepunch.com/r/rust_reboot")
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+	case "roadmap":
+		{
+			_, err := s.ChannelMessageSend(m.ChannelID, "https://rust.nolt.io/roadmap")
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+	case "search":
+		if len(sc) == 2 {
+			_, err := s.ChannelMessageSend(m.ChannelID, "No options passed to !rustbot search.")
+			if err != nil {
+				log.Fatal(err)
+			}
+			return
+		}
+		// !rustbot search [query]
+		if len(sc) > 2 {
+			var query string
+			for _, v := range sc[2:] {
+				query += v + "+"
+			}
+			ids := battlemetrics.GetListOfRustServers(query)
+			_, err := s.ChannelMessageSend(m.ChannelID, battlemetrics.GetRankedListOfRustServers(ids))
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -116,7 +150,9 @@ Rustbot is a Discord bot to help you pick a Rust server to play on.
 
 !rustbot top - The top command will return the top 25 ranked Rust servers on BattleMetrics.
 !rustbot server [id] - The server command will lookup the ID you provided and return you detailed information about the Rust server. You can get the ID from the !rustbot top command.
+!rustbot search [query] - The search command will perform a search based off your query. It will return you a list of servers matching the search sorted by rank.
 !rustbot commits - The commits command will link you to the Facepunch official site to view the latest commits for the game.
+!rustbot roadmap - The roadmap command will link you to the Rust roadmap.
 `
 
 	return fmt.Sprintf("%v%v%v", ticks, message, ticks)
