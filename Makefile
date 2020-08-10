@@ -1,13 +1,10 @@
 env:
 	go env
 
-build: env mod lint
+build: env mod 
 	docker build -t rustbot:latest .
-
-lint:
-	golangci-lint run
 
 mod:
 	go mod tidy
 
-.PHONY: env build lint mod
+.PHONY: env build mod
