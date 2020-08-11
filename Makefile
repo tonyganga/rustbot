@@ -1,10 +1,13 @@
 env:
 	go env
 
-build: env mod 
+build: env mod test 
 	docker build -t rustbot:latest .
 
 mod:
-	go mod tidy
+	go mod download
 
-.PHONY: env build mod
+test:
+	go test -v ./...
+
+.PHONY: env build mod test
