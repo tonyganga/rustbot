@@ -12,7 +12,7 @@ builds:
     goarch:
       - arm
       - amd64
-    binary: "{{.ProjectName}}"
+    binary: "{{ .ProjectName }}"
 archives:
   - replacements:
       arm: rpi
@@ -25,8 +25,8 @@ dockers:
       - "{{ .ProjectName }}"
     dockerfile: Dockerfile
     image_templates:
-      - "booleanismaybe/{{.ProjectName}}:{{ .Tag }}"
-      - "booleanismaybe/{{.ProjectName}}:latest"
+      - "booleanismaybe/{{ .ProjectName }}:{{ .Tag }}"
+      - "booleanismaybe/{{ .ProjectName }}:latest"
 checksum:
   name_template: 'checksums.txt'
 changelog:
