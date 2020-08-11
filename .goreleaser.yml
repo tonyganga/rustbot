@@ -3,7 +3,7 @@ before:
   hooks:
     - go mod download
     - go mod tidy
-    - docker login --u booleanismaybe -p {{ .Env.DOCKERHUB_TOKEN }}
+    - docker login -u booleanismaybe -p {{ .Env.DOCKERHUB_TOKEN }}
 builds:
   - env:
       - CGO_ENABLED=0
