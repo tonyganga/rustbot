@@ -9,6 +9,7 @@ builds:
       - linux
     goarch:
       - arm
+      - amd64
 archives:
   - replacements:
       arm: rpi
