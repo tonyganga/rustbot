@@ -15,7 +15,6 @@ builds:
     binary: rustbot
 archives:
   - replacements:
-      arm: rpi
       amd64: x86_64
 dockers:
   - 
