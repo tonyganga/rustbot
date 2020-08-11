@@ -12,7 +12,7 @@ builds:
     goarch:
       - arm
       - amd64
-    binary: "{{ .ProjectName }}"
+    binary: rustbot
 archives:
   - replacements:
       arm: rpi
@@ -22,7 +22,7 @@ dockers:
     goos: linux
     goarch: arm
     binaries:
-      - "{{ .ProjectName }}"
+      - rustbot
     dockerfile: Dockerfile
     image_templates:
       - "booleanismaybe/{{ .ProjectName }}:{{ .Tag }}"
