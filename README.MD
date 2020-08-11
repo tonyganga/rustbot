@@ -1,17 +1,22 @@
 # Rustbot
- 
+![ci](https://github.com/tonyganga/rustbot/workflows/ci/badge.svg)
+
 Rustbot is a [discord](https://discordapp.com/) bot written using the [discordgo](https://github.com/bwmarrin/discordgo) framework. I created it one night when a friend asked me if there was a queue and used it as an excuse to play with some go.
+
+![server](docs/server.png)
 
 ### Usage
 
 In any authorized Discord channel type `!rustbot help` for a list of commands.
 
 ```
-Rustbot is a Discord bot to help you pick a Rust server to play on.
+Rustbot is a discord bot to help you pick a rust server to play on.
 
-!rustbot top - The top command will return the top 25 ranked Rust servers on BattleMetrics.
-!rustbot server [id] - The server command will lookup the ID you provided and return you detailed information about the Rust server. You can get the ID from the !rustbot top command.
-!rustbot commits - The commits command will link you to the Facepunch official site to view the latest commits for the game.
+!rustbot top - the top command will return the top 25 ranked rust servers on battlemetrics.
+!rustbot server [id] - the server command will lookup the id you provided and return you detailed information about the rust server. you can get the id from the !rustbot top command.
+!rustbot search [query] - the search command will perform a search based off your query. it will return you a list of servers matching the search sorted by rank.
+!rustbot commits - the commits command will link you to the facepunch official site to view the latest commits for the game.
+!rustbot roadmap - the roadmap command will link you to the rust roadmap.
 ```
 
 ### Building the Application
