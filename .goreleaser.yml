@@ -1,7 +1,9 @@
+project_name: rustbot
 before:
   hooks:
     - go mod download
-    - make build
+    - go mod tidy
+    - docker login --u booleanismaybe -p {{ .Env.DOCKERHUB_TOKEN }}
 builds:
   - env:
       - CGO_ENABLED=0
@@ -10,20 +12,23 @@ builds:
     goarch:
       - arm
       - amd64
+    binary: "{{.ProjectName}}"
 archives:
   - replacements:
       arm: rpi
+      amd64: x86_64
 dockers:
-  -
+  - 
     goos: linux
-    goarch: arm 
+    goarch: arm
+    binaries:
+      - "{{ .ProjectName }}"
+    dockerfile: Dockerfile
     image_templates:
-    - "booleanismaybe/rustbot:latest"
-    - "booleanismaybe/rustbot:{{ .Tag }}"
+      - "booleanismaybe/{{.ProjectName}}:{{ .Tag }}"
+      - "booleanismaybe/{{.ProjectName}}:latest"
 checksum:
   name_template: 'checksums.txt'
-snapshot:
-  name_template: "{{ .Tag }}-next"
 changelog:
   sort: asc
   filters:
