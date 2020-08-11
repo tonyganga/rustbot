@@ -3,7 +3,6 @@ before:
   hooks:
     - go mod download
     - go mod tidy
-    - docker login -u booleanismaybe -p {{ .Env.DOCKERHUB_TOKEN }}
 builds:
   - env:
       - CGO_ENABLED=0
@@ -16,16 +15,6 @@ builds:
 archives:
   - replacements:
       amd64: x86_64
-dockers:
-  - 
-    goos: linux
-    goarch: arm
-    binaries:
-      - rustbot
-    dockerfile: Dockerfile
-    image_templates:
-      - "booleanismaybe/{{ .ProjectName }}:{{ .Tag }}"
-      - "booleanismaybe/{{ .ProjectName }}:latest"
 checksum:
   name_template: 'checksums.txt'
 changelog:
