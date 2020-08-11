@@ -12,6 +12,13 @@ builds:
 archives:
   - replacements:
       arm: rpi
+dockers:
+  -
+    goos: linux
+    goarch: arm 
+    image_templates:
+    - "booleanismaybe/rustbot:latest"
+    - "booleanismaybe/rustbot:{{ .Tag }}"
 checksum:
   name_template: 'checksums.txt'
 snapshot:
