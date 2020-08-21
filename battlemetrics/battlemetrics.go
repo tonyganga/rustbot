@@ -194,19 +194,19 @@ func GetRustServer(id string) RustServer {
 	fmt.Println(url)
 	res, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	info, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 	defer res.Body.Close()
 
 	var servers RustServer
 	err = json.Unmarshal(info, &servers)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 	return servers
 }
@@ -219,19 +219,19 @@ func GetListOfRustServers(query string) map[int]string {
 	fmt.Println(url)
 	res, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	info, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 	defer res.Body.Close()
 
 	var list ServerList
 	err = json.Unmarshal(info, &list)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	for _, v := range list.Data {

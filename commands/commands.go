@@ -35,7 +35,7 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Content == BOT_KEYWORD {
 		_, err := s.ChannelMessageSendEmbed(m.ChannelID, infoMessage())
 		if err != nil {
-			log.Fatal(err)
+			log.Print(err)
 		}
 		return
 	}
@@ -46,14 +46,14 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			ids := battlemetrics.GetListOfRustServers("")
 			_, err := s.ChannelMessageSend(m.ChannelID, battlemetrics.GetRankedListOfRustServers(ids))
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 			}
 		}
 	case "server":
 		if len(sc) == 2 {
 			_, err := s.ChannelMessageSend(m.ChannelID, "No options passed to !rustbot server.")
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 			}
 			return
 		}
@@ -62,12 +62,12 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			id := sc[2]
 			match, err := regexp.MatchString(`^[0-9]+$`, id)
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 			}
 			if !match {
 				_, err := s.ChannelMessageSend(m.ChannelID, "That doesn't look like a valid server ID.")
 				if err != nil {
-					log.Fatal(err)
+					log.Print(err)
 				}
 				return
 			}
@@ -75,28 +75,28 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			server := battlemetrics.GetRustServer(id)
 			_, err = s.ChannelMessageSendEmbed(m.ChannelID, server.RustServerMessage())
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 			}
 		}
 	case "commits":
 		{
 			_, err := s.ChannelMessageSend(m.ChannelID, "https://commits.facepunch.com/r/rust_reboot")
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 			}
 		}
 	case "roadmap":
 		{
 			_, err := s.ChannelMessageSend(m.ChannelID, "https://rust.nolt.io/roadmap")
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 			}
 		}
 	case "search":
 		if len(sc) == 2 {
 			_, err := s.ChannelMessageSend(m.ChannelID, "No options passed to !rustbot search.")
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 			}
 			return
 		}
@@ -109,14 +109,14 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			ids := battlemetrics.GetListOfRustServers(query)
 			_, err := s.ChannelMessageSend(m.ChannelID, battlemetrics.GetRankedListOfRustServers(ids))
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 			}
 		}
 	case "help":
 		{
 			_, err := s.ChannelMessageSend(m.ChannelID, helpMessage())
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 			}
 		}
 	}
