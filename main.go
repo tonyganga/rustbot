@@ -12,14 +12,14 @@ import (
 
 func main() {
 	// Lookup token from ENV
-	Token := os.Getenv("DISCORD_TOKEN")
-	if Token == "" {
+	token, ok := os.LookupEnv("DISCORD_TOKEN")
+	if !ok {
 		fmt.Println("Unable to find token, please make sure DISCORD_TOKEN is set.")
 		return
 	}
 
 	// Create a new Discord session using Token from DISCORD_TOKEN
-	dg, err := discordgo.New("Bot " + Token)
+	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
 		fmt.Println("error creating Discord session,", err)
 		return
