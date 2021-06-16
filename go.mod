@@ -1,6 +1,6 @@
 module github.com/tonyganga/rustbot
 
-go 1.14
+go 1.16
 
 require (
 	github.com/bwmarrin/discordgo v0.19.0
