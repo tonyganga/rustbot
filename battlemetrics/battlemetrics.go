@@ -3,7 +3,6 @@ package battlemetrics
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"sort"
@@ -189,7 +188,6 @@ func (r *RustServer) RustServerMessage() *discordgo.MessageEmbed {
 }
 
 func GetRustServer(id string) RustServer {
-
 	url := fmt.Sprintf("%s/servers/%s", BattleMetricsURL, id)
 	fmt.Println(url)
 	res, err := http.Get(url)
@@ -197,17 +195,13 @@ func GetRustServer(id string) RustServer {
 		log.Print(err)
 	}
 
-	info, err := ioutil.ReadAll(res.Body)
+	var servers RustServer
+	err = json.NewDecoder(res.Body).Decode(&servers)
 	if err != nil {
 		log.Print(err)
 	}
 	defer res.Body.Close()
 
-	var servers RustServer
-	err = json.Unmarshal(info, &servers)
-	if err != nil {
-		log.Print(err)
-	}
 	return servers
 }
 
@@ -222,17 +216,12 @@ func GetListOfRustServers(query string) map[int]string {
 		log.Print(err)
 	}
 
-	info, err := ioutil.ReadAll(res.Body)
+	var list ServerList
+	err = json.NewDecoder(res.Body).Decode(&list)
 	if err != nil {
 		log.Print(err)
 	}
 	defer res.Body.Close()
-
-	var list ServerList
-	err = json.Unmarshal(info, &list)
-	if err != nil {
-		log.Print(err)
-	}
 
 	for _, v := range list.Data {
 		results[v.Attributes.Rank] = fmt.Sprintf("%v %v", v.Attributes.ID, v.Attributes.Name)
