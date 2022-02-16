@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"fmt"
 	"log"
 	"regexp"
 	"strings"
@@ -20,11 +19,8 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	// !rustbot [command]
+	// !rustbot [command] [params]
 	sc := strings.Split(strings.TrimSpace(m.Content), " ")
-	if len(sc) < 1 {
-		return
-	}
 
 	// ignore message that don't start with bot keyword
 	if sc[0] != BOT_KEYWORD {
@@ -114,7 +110,7 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	case "help":
 		{
-			_, err := s.ChannelMessageSend(m.ChannelID, helpMessage())
+			_, err := s.ChannelMessageSendEmbed(m.ChannelID, helpMessage())
 			if err != nil {
 				log.Print(err)
 			}
@@ -141,20 +137,38 @@ func infoMessage() *discordgo.MessageEmbed {
 	}
 }
 
-func helpMessage() string {
-	var message string
-	ticks := "```"
-	message =
-		`
-Rustbot is a Discord bot to help you pick a Rust server to play on.
-
-!rustbot top - The top command will return the top 25 ranked Rust servers on BattleMetrics.
-!rustbot server [id] - The server command will lookup the ID you provided and return you detailed information about the Rust server. You can get the ID from the !rustbot top command.
-!rustbot search [query] - The search command will perform a search based off your query. It will return you a list of servers matching the search sorted by rank.
-!rustbot commits - The commits command will link you to the Facepunch official site to view the latest commits for the game.
-!rustbot roadmap - The roadmap command will link you to the Rust roadmap.
-`
-
-	return fmt.Sprintf("%v%v%v", ticks, message, ticks)
-
+func helpMessage() *discordgo.MessageEmbed {
+	return &discordgo.MessageEmbed{
+		Title:       "Commands",
+		URL:         "https://github.com/tonyganga/rustbot#usage",
+		Description: "The following are the available commands for Rustbot",
+		Color:       0x93C54B,
+		Fields: []*discordgo.MessageEmbedField{
+			{
+				Name:   "top",
+				Value:  "The top command will return the top 25 ranked Rust servers on BattleMetrics.",
+				Inline: false,
+			},
+			{
+				Name:   "server",
+				Value:  "The server command will lookup the ID you provided and return you detailed information about the Rust server. You can get the ID from the `!rustbot top` command.",
+				Inline: false,
+			},
+			{
+				Name:   "search",
+				Value:  "The search command will perform a search based off your query. The search is text based, so you can do something like `!rustbot search rustoria` to get a list of all the Rustoria servers, sorted by rank.",
+				Inline: false,
+			},
+			{
+				Name:   "commits",
+				Value:  "The commits command will link you to the Facepunch official site to view the latest commits for the game.",
+				Inline: false,
+			},
+			{
+				Name:   "roadmap",
+				Value:  "The roadmap command will link you to the Rust roadmap.",
+				Inline: false,
+			},
+		},
+	}
 }
