@@ -3,8 +3,9 @@ package router
 import (
 	"log"
 	"regexp"
-	"strings"
+	"time"
 
+	"github.com/Necroforger/dgwidgets"
 	"github.com/bwmarrin/discordgo"
 	"github.com/tonyganga/rustbot/internal/battlemetrics"
 )
@@ -19,101 +20,66 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	// !rustbot [command] [params]
-	sc := strings.Split(strings.TrimSpace(m.Content), " ")
-
-	// ignore message that don't start with bot keyword
-	if sc[0] != BOT_KEYWORD {
-		return
-	}
-
-	// send default help message when only keyword is provided
+	// show paginated menu when only the BOT_KEYWORD is sent to a channel
 	if m.Content == BOT_KEYWORD {
-		_, err := s.ChannelMessageSendEmbed(m.ChannelID, InfoMessage())
-		if err != nil {
-			log.Print(err)
-		}
-		return
-	}
+		p := dgwidgets.NewPaginator(s, m.ChannelID)
+		p.DeleteMessageWhenDone = true
+		p.ColourWhenDone = 0xffff
+		p.Widget.Timeout = time.Minute * 2
 
-	switch sc[1] {
-	case "top":
-		{
+		p.Add(ReactionMessage(), InfoMessage())
+		p.SetPageFooters()
+
+		p.Widget.Handle(UPWARD_TREND_EMOJI, func(w *dgwidgets.Widget, r *discordgo.MessageReaction) {
 			ids := battlemetrics.GetListOfRustServers("")
-			_, err := s.ChannelMessageSend(m.ChannelID, battlemetrics.GetRankedListOfRustServers(ids))
+			msg, err := s.ChannelMessageSend(m.ChannelID, battlemetrics.GetRankedListOfRustServers(ids))
 			if err != nil {
 				log.Print(err)
 			}
-		}
-	case "server":
-		if len(sc) == 2 {
-			_, err := s.ChannelMessageSend(m.ChannelID, "No options passed to !rustbot server.")
-			if err != nil {
-				log.Print(err)
-			}
-			return
-		}
-		// !rustbot server [id]
-		if len(sc) > 2 {
-			id := sc[2]
-			match, err := regexp.MatchString(`^[0-9]+$`, id)
-			if err != nil {
-				log.Print(err)
-			}
-			if !match {
-				_, err := s.ChannelMessageSend(m.ChannelID, "That doesn't look like a valid server ID.")
+			time.Sleep(time.Second * 15)
+			s.ChannelMessageDelete(m.ChannelID, msg.ID)
+		})
+
+		p.Widget.Handle(ID_EMOJI, func(w *dgwidgets.Widget, r *discordgo.MessageReaction) {
+			if msg, err := w.QueryInput("What is the ID of the Rust server you are looking for?", r.UserID, 15*time.Second); err == nil {
+				id := msg.Content
+				match, err := regexp.MatchString(`^[0-9]+$`, id)
 				if err != nil {
 					log.Print(err)
 				}
-				return
+				if !match {
+					_, err := s.ChannelMessageSend(m.ChannelID, "That doesn't look like a valid server ID.")
+					if err != nil {
+						log.Print(err)
+					}
+					return
+				}
+				server := battlemetrics.GetRustServer(id)
+				p.Add(server.RustServerMessage())
+				p.Goto(len(p.Pages) - 1)
+				p.Update()
 			}
+		})
 
-			server := battlemetrics.GetRustServer(id)
-			_, err = s.ChannelMessageSendEmbed(m.ChannelID, server.RustServerMessage())
-			if err != nil {
-				log.Print(err)
+		p.Widget.Handle(SEARCH_EMOJI, func(w *dgwidgets.Widget, r *discordgo.MessageReaction) {
+			if msg, err := w.QueryInput("What Rust server are you looking for?", r.UserID, 15*time.Second); err == nil {
+				var query string
+				content := msg.Content
+				for _, v := range content {
+					query += string(v)
+				}
+
+				ids := battlemetrics.GetListOfRustServers(query)
+				msg, err := s.ChannelMessageSend(m.ChannelID, battlemetrics.GetRankedListOfRustServers(ids))
+				if err != nil {
+					log.Print(err)
+				}
+				time.Sleep(time.Second * 15)
+				s.ChannelMessageDelete(m.ChannelID, msg.ID)
 			}
-		}
-	case "commits":
-		{
-			_, err := s.ChannelMessageSend(m.ChannelID, "https://commits.facepunch.com/r/rust_reboot")
-			if err != nil {
-				log.Print(err)
-			}
-		}
-	case "roadmap":
-		{
-			_, err := s.ChannelMessageSend(m.ChannelID, "https://rust.nolt.io/roadmap")
-			if err != nil {
-				log.Print(err)
-			}
-		}
-	case "search":
-		if len(sc) == 2 {
-			_, err := s.ChannelMessageSend(m.ChannelID, "No options passed to !rustbot search.")
-			if err != nil {
-				log.Print(err)
-			}
-			return
-		}
-		// !rustbot search [query]
-		if len(sc) > 2 {
-			var query string
-			for _, v := range sc[2:] {
-				query += v + "+"
-			}
-			ids := battlemetrics.GetListOfRustServers(query)
-			_, err := s.ChannelMessageSend(m.ChannelID, battlemetrics.GetRankedListOfRustServers(ids))
-			if err != nil {
-				log.Print(err)
-			}
-		}
-	case "help":
-		{
-			_, err := s.ChannelMessageSendEmbed(m.ChannelID, HelpMessage())
-			if err != nil {
-				log.Print(err)
-			}
-		}
+		})
+
+		p.Spawn()
+		return
 	}
 }
