@@ -1,16 +1,22 @@
-env:
-	go env
-
-build: env mod test 
+image: build
 	docker build -t rustbot:latest .
+
+build: mod test 
+	go build .
 
 build-rpi: env mod test
 	docker build -t rustbot:arm --build-arg GOARCH=arm .
 
 mod:
-	go mod download
+	go mod tidy && go mod download
 
 test:
 	go test -v ./...
 
-.PHONY: env build mod test build-rpi
+clean:
+	rm -r ./rustbot
+
+up:
+	./rustbot
+
+.PHONY: build mod test build-rpi image 

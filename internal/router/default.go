@@ -2,7 +2,12 @@ package router
 
 import "github.com/bwmarrin/discordgo"
 
-// !rustbot
+const (
+	SEARCH_EMOJI       = "🔎"
+	UPWARD_TREND_EMOJI = "📈"
+	ID_EMOJI           = "🆔"
+)
+
 func InfoMessage() *discordgo.MessageEmbed {
 	return &discordgo.MessageEmbed{
 		Title: "Rustbot",
@@ -14,45 +19,39 @@ func InfoMessage() *discordgo.MessageEmbed {
 				Inline: false,
 			},
 			{
-				Name:   "Author",
-				Value:  "https://github.com/tonyganga/rustbot",
+				Name:   "Rust Commits",
+				Value:  "https://commits.facepunch.com/r/rust_reboot",
+				Inline: false,
+			},
+			{
+				Name:   "Rust Roadmap",
+				Value:  "https://rust.nolt.io/roadmap",
 				Inline: false,
 			},
 		},
 	}
 }
 
-// !rustbot help
-func HelpMessage() *discordgo.MessageEmbed {
+func ReactionMessage() *discordgo.MessageEmbed {
 	return &discordgo.MessageEmbed{
-		Title:       "Commands",
+		Title:       "Reactions",
 		URL:         "https://github.com/tonyganga/rustbot#usage",
-		Description: "The following are the available commands for Rustbot",
+		Description: "The following are the available reactions for Rustbot",
 		Color:       0x93C54B,
 		Fields: []*discordgo.MessageEmbedField{
 			{
-				Name:   "top",
-				Value:  "The top command will return the top 25 ranked Rust servers on BattleMetrics.",
+				Name:   UPWARD_TREND_EMOJI,
+				Value:  "Reacting with this emoji will return the top 25 ranked Rust servers on BattleMetrics.",
 				Inline: false,
 			},
 			{
-				Name:   "server",
-				Value:  "The server command will lookup the ID you provided and return you detailed information about the Rust server. You can get the ID from the `!rustbot top` command.",
+				Name:   ID_EMOJI,
+				Value:  "Reacting with this emoji will lookup the ID you provided and show you detailed information about the Rust server.",
 				Inline: false,
 			},
 			{
-				Name:   "search",
-				Value:  "The search command will perform a search based off your query. The search is text based, so you can do something like `!rustbot search rustoria` to get a list of all the Rustoria servers, sorted by rank.",
-				Inline: false,
-			},
-			{
-				Name:   "commits",
-				Value:  "The commits command will link you to the Facepunch official site to view the latest commits for the game.",
-				Inline: false,
-			},
-			{
-				Name:   "roadmap",
-				Value:  "The roadmap command will link you to the Rust roadmap.",
+				Name:   SEARCH_EMOJI,
+				Value:  "Reacting with this emoji will search for all Rust servers matching your search term.",
 				Inline: false,
 			},
 		},
