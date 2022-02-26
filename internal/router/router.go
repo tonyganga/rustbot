@@ -24,7 +24,6 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Content == BOT_KEYWORD {
 		p := dgwidgets.NewPaginator(s, m.ChannelID)
 		p.DeleteMessageWhenDone = true
-		p.ColourWhenDone = 0xffff
 		p.Widget.Timeout = time.Minute * 2
 
 		p.Add(ReactionMessage(), InfoMessage())
@@ -35,16 +34,16 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			p.Add(ids.RankedServerListMessage())
 			err := p.Goto(len(p.Pages) - 1)
 			if err != nil {
-				log.Println(err)
+				log.Print(err)
 			}
 			err = p.Update()
 			if err != nil {
-				log.Println(err)
+				log.Print(err)
 			}
 
 		})
 		if err != nil {
-			log.Println(err)
+			log.Print(err)
 		}
 
 		err = p.Widget.Handle(ID_EMOJI, func(w *dgwidgets.Widget, r *discordgo.MessageReaction) {
@@ -65,16 +64,16 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 				p.Add(server.RustServerMessage())
 				err = p.Goto(len(p.Pages) - 1)
 				if err != nil {
-					log.Println(err)
+					log.Print(err)
 				}
 				err = p.Update()
 				if err != nil {
-					log.Println(err)
+					log.Print(err)
 				}
 			}
 		})
 		if err != nil {
-			log.Println(err)
+			log.Print(err)
 		}
 
 		err = p.Widget.Handle(SEARCH_EMOJI, func(w *dgwidgets.Widget, r *discordgo.MessageReaction) {
@@ -89,21 +88,21 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 				p.Add(ids.RankedServerListMessage())
 				err := p.Goto(len(p.Pages) - 1)
 				if err != nil {
-					log.Println(err)
+					log.Print(err)
 				}
 				err = p.Update()
 				if err != nil {
-					log.Println(err)
+					log.Print(err)
 				}
 			}
 		})
 		if err != nil {
-			log.Println(err)
+			log.Print(err)
 		}
 
 		err = p.Spawn()
 		if err != nil {
-			log.Println(err)
+			log.Print(err)
 		}
 		return
 	}

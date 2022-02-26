@@ -2,39 +2,49 @@ package battlemetrics
 
 import (
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRustServerFieldsAreValid(t *testing.T) {
-	req := GetRustServer("6324892")
-	var i int
-	var s string
+func TestGetRustServer(t *testing.T) {
+	type test struct {
+		input    string
+		want     interface{}
+		contains string
+	}
 
-	assert.IsType(t, i, req.Data.Attributes.Rank)
-	assert.IsType(t, s, req.Data.Attributes.Name)
-	assert.IsType(t, s, req.Data.Attributes.ID)
+	tests := []test{
+		{input: "6792417", want: "6792417", contains: "UKN"},
+		{input: "6324892", want: "6324892", contains: "Rustoria"},
+		{input: "3461363", want: "3461363", contains: "Bloo"},
+	}
+
+	for _, tc := range tests {
+		got := GetRustServer(tc.input)
+		assert.NotEmpty(t, got.Data)
+		assert.Equal(t, tc.want, got.Data.ID)
+		assert.Contains(t, got.Data.Attributes.Name, tc.contains)
+	}
 }
 
-func TestRustMessageFieldsAreValid(t *testing.T) {
-	req := GetRustServer("6324892")
-	var i int
-	var s string
-	var time time.Time
-	var f float64
+func TestGetRustServersWithQuery(t *testing.T) {
+	type test struct {
+		input string
+		want  interface{}
+	}
 
-	assert.IsType(t, s, req.Data.Attributes.Name)
-	assert.IsType(t, s, req.Data.Attributes.Details.RustDescription)
-	assert.IsType(t, s, req.Data.Attributes.Details.RustURL)
-	assert.IsType(t, s, req.Data.Attributes.Details.RustHeaderimage)
-	assert.IsType(t, i, req.Data.Attributes.Rank)
-	assert.IsType(t, time, req.Data.Attributes.Details.RustLastWipe)
-	assert.IsType(t, i, req.Data.Attributes.Players)
-	assert.IsType(t, i, req.Data.Attributes.MaxPlayers)
-	assert.IsType(t, i, req.Data.Attributes.Details.RustQueuedPlayers)
-	assert.IsType(t, f, req.Data.Attributes.Details.RustFpsAvg)
-	assert.IsType(t, i, req.Data.Attributes.Details.RustWorldSize)
-	assert.IsType(t, s, req.Data.Attributes.IP)
-	assert.IsType(t, i, req.Data.Attributes.Port)
+	tests := []test{
+		{input: "rustoria", want: 0},
+		{input: "ukn", want: 0},
+		{input: "moose", want: 0},
+		{input: "stevious", want: 0},
+		{input: "bloo", want: 0},
+		{input: "", want: 0},
+	}
+
+	for _, tc := range tests {
+		got := GetListOfRustServers(tc.input)
+		assert.NotEmpty(t, got.Data)
+		assert.Greater(t, len(got.Data), tc.want)
+	}
 }
