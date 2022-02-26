@@ -6,7 +6,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// !rustbot server [id]
 func (r *RustServer) RustServerMessage() *discordgo.MessageEmbed {
 	return &discordgo.MessageEmbed{
 		Title:       r.Data.Attributes.Name,
@@ -48,5 +47,24 @@ func (r *RustServer) RustServerMessage() *discordgo.MessageEmbed {
 				Inline: false,
 			},
 		},
+	}
+}
+
+func (r *RustServers) RankedServerFields() []*discordgo.MessageEmbedField {
+	var s []*discordgo.MessageEmbedField
+	for _, v := range r.Data {
+		s = append(s, &discordgo.MessageEmbedField{
+			Name:   v.Attributes.Name,
+			Value:  v.Attributes.ID,
+			Inline: false,
+		})
+	}
+	return s
+}
+
+func (r *RustServers) RankedServerListMessage() *discordgo.MessageEmbed {
+	return &discordgo.MessageEmbed{
+		Title:  "Servers",
+		Fields: r.RankedServerFields(),
 	}
 }

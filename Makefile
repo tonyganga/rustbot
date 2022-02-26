@@ -16,7 +16,7 @@ test:
 clean:
 	rm -r ./rustbot
 
-up:
+up: build
 	./rustbot
 
 .PHONY: build mod test build-rpi image 
