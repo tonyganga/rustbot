@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
+	"time"
 )
 
 const (
@@ -16,9 +18,23 @@ const (
 )
 
 func GetRustServer(id string) RustServer {
-	url := fmt.Sprintf("%s/servers/%s", BattleMetricsURL, id)
+	urlString := fmt.Sprintf("%s/servers/%s", BattleMetricsURL, id)
+	url, err := url.Parse(urlString)
+	if err != nil {
+		log.Print(err)
+	}
 	fmt.Println(url)
-	res, err := http.Get(url)
+
+	client := http.Client{
+		Timeout: time.Second * 10,
+	}
+
+	req := &http.Request{
+		Method: "GET",
+		URL:    url,
+	}
+
+	res, err := client.Do(req)
 	if err != nil {
 		log.Print(err)
 	}
@@ -38,10 +54,25 @@ func GetListOfRustServers(query ...string) RustServers {
 	for _, v := range query {
 		q += string(v)
 	}
-	search := SearchFilter + q
-	url := fmt.Sprintf("%v/servers%v%v%v%v", BattleMetricsURL, RustFilter, CountryFilter, PageFilter, search)
+	search := fmt.Sprintf("%v%v", SearchFilter, q)
+
+	urlString := fmt.Sprintf("%v/servers%v%v%v%v", BattleMetricsURL, RustFilter, CountryFilter, PageFilter, search)
+	url, err := url.Parse(urlString)
+	if err != nil {
+		log.Print(err)
+	}
 	fmt.Println(url)
-	res, err := http.Get(url)
+
+	client := http.Client{
+		Timeout: time.Second * 10,
+	}
+
+	req := &http.Request{
+		Method: "GET",
+		URL:    url,
+	}
+
+	res, err := client.Do(req)
 	if err != nil {
 		log.Print(err)
 	}

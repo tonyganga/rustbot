@@ -43,7 +43,7 @@ func (r *RustServer) RustServerMessage() *discordgo.MessageEmbed {
 			},
 			{
 				Name:   "Connection Information",
-				Value:  fmt.Sprintf("client.connect %v:%v", r.Data.Attributes.IP, r.Data.Attributes.Port),
+				Value:  fmt.Sprintf("steam://connect/%v:%v", r.Data.Attributes.IP, r.Data.Attributes.Port),
 				Inline: false,
 			},
 		},
