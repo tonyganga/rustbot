@@ -1,30 +1,11 @@
 package battlemetrics
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 )
-
-func TestRankedListIsSorted(t *testing.T) {
-
-	ids := make(map[int]string)
-	ids[1] = "moose main"
-	ids[3] = "moose medium iii"
-	ids[2] = "moose medium"
-
-	got := GetRankedListOfRustServers(ids)
-	var expected string
-	ticks := "```"
-	sl := "moose main\nmoose medium\nmoose medium iii"
-	expected = fmt.Sprintf("%v\n%v\n%v", ticks, sl, ticks)
-	if got != expected {
-		t.Errorf("got: %v\nexpected:%v", got, expected)
-	}
-
-}
 
 func TestRustServerFieldsAreValid(t *testing.T) {
 	req := GetRustServer("6324892")

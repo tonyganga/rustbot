@@ -31,16 +31,17 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		p.SetPageFooters()
 
 		err := p.Widget.Handle(UPWARD_TREND_EMOJI, func(w *dgwidgets.Widget, r *discordgo.MessageReaction) {
-			ids := battlemetrics.GetListOfRustServers("")
-			msg, err := s.ChannelMessageSend(m.ChannelID, battlemetrics.GetRankedListOfRustServers(ids))
-			if err != nil {
-				log.Print(err)
-			}
-			time.Sleep(time.Second * 15)
-			err = s.ChannelMessageDelete(m.ChannelID, msg.ID)
+			ids := battlemetrics.GetListOfRustServers()
+			p.Add(ids.RankedServerListMessage())
+			err := p.Goto(len(p.Pages) - 1)
 			if err != nil {
 				log.Println(err)
 			}
+			err = p.Update()
+			if err != nil {
+				log.Println(err)
+			}
+
 		})
 		if err != nil {
 			log.Println(err)
@@ -85,12 +86,12 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 				}
 
 				ids := battlemetrics.GetListOfRustServers(query)
-				msg, err := s.ChannelMessageSend(m.ChannelID, battlemetrics.GetRankedListOfRustServers(ids))
+				p.Add(ids.RankedServerListMessage())
+				err := p.Goto(len(p.Pages) - 1)
 				if err != nil {
-					log.Print(err)
+					log.Println(err)
 				}
-				time.Sleep(time.Second * 15)
-				err = s.ChannelMessageDelete(m.ChannelID, msg.ID)
+				err = p.Update()
 				if err != nil {
 					log.Println(err)
 				}
