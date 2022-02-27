@@ -10,28 +10,23 @@ import (
 )
 
 const (
-	BattleMetricsURL = "https://api.battlemetrics.com"
-	RustFilter       = "?filter[game]=rust"
-	CountryFilter    = "&filter[countries][0]=US&filter[countries][1]=CA"
-	PageFilter       = "&page[size]=25"
-	SearchFilter     = "&filter[search]="
+	BattleMetricsBase = "https://api.battlemetrics.com"
 )
 
 func GetRustServer(id string) RustServer {
-	urlString := fmt.Sprintf("%s/servers/%s", BattleMetricsURL, id)
-	url, err := url.Parse(urlString)
+	url, err := url.Parse(fmt.Sprintf("%v/servers/%v", BattleMetricsBase, id))
 	if err != nil {
 		log.Print(err)
 	}
-	fmt.Println(url)
+	log.Print(url)
 
 	client := http.Client{
 		Timeout: time.Second * 10,
 	}
 
-	req := &http.Request{
-		Method: "GET",
-		URL:    url,
+	req, err := http.NewRequest("GET", url.String(), nil)
+	if err != nil {
+		log.Print(err)
 	}
 
 	res, err := client.Do(req)
@@ -54,22 +49,31 @@ func GetListOfRustServers(query ...string) RustServers {
 	for _, v := range query {
 		q += string(v)
 	}
-	search := fmt.Sprintf("%v%v", SearchFilter, q)
 
-	urlString := fmt.Sprintf("%v/servers%v%v%v%v", BattleMetricsURL, RustFilter, CountryFilter, PageFilter, search)
-	url, err := url.Parse(urlString)
+	url, err := url.Parse(fmt.Sprintf("%v/%v", BattleMetricsBase, "servers"))
 	if err != nil {
 		log.Print(err)
 	}
+
+	log.Print(url)
+
+	queryParams := url.Query()
+	queryParams.Set("filter[game]", "rust")
+	queryParams.Set("filter[countries][0]", "US")
+	queryParams.Set("filter[countries][1]", "CA")
+	queryParams.Set("page[size]", "25")
+	queryParams.Set("filter[search]", q)
+	url.RawQuery = queryParams.Encode()
+
 	fmt.Println(url)
 
 	client := http.Client{
 		Timeout: time.Second * 10,
 	}
 
-	req := &http.Request{
-		Method: "GET",
-		URL:    url,
+	req, err := http.NewRequest("GET", url.String(), nil)
+	if err != nil {
+		log.Print(err)
 	}
 
 	res, err := client.Do(req)
