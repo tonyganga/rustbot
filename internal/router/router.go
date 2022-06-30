@@ -1,7 +1,10 @@
 package router
 
 import (
+	"errors"
+	"fmt"
 	"log"
+	"os"
 	"regexp"
 	"time"
 
@@ -15,6 +18,8 @@ const (
 )
 
 func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
+
+	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 	// ignore bot messages
 	if m.Author.Bot {
 		return
@@ -105,5 +110,47 @@ func RustHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			log.Print(err)
 		}
 		return
+	} else if m.Content == "roles" {
+		fmt.Println("running roles")
+		p := dgwidgets.NewPaginator(s, m.ChannelID)
+		p.DeleteMessageWhenDone = true
+		p.Widget.Timeout = time.Minute * 2
+
+		p.Add(RoleMessage())
+		p.SetPageFooters()
+
+		err := p.Widget.Handle(RUST_EMOJI, func(w *dgwidgets.Widget, r *discordgo.MessageReaction) {
+			roles, err := s.GuildRoles(r.GuildID)
+
+			roleID, err := getRoleID(roles, "rustbotrole")
+			fmt.Println(roleID)
+			if err != nil {
+				errorLog.Println(err)
+				return
+			}
+
+			err = s.GuildMemberRoleAdd(r.GuildID, r.UserID, roleID)
+			if err != nil {
+				errorLog.Println(err)
+			}
+		})
+
+		err = p.Spawn()
+		if err != nil {
+			errorLog.Println(err)
+		}
+		return
 	}
+}
+
+func getRoleID(roles []*discordgo.Role, RoleName string) (string, error) {
+
+	for _, role := range roles {
+		if role.Name == RoleName {
+			return role.ID, nil
+		}
+	}
+
+	return "", errors.New("Role Not Found")
+
 }

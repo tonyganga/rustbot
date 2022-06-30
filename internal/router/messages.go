@@ -6,6 +6,7 @@ const (
 	SEARCH_EMOJI       = "🔎"
 	UPWARD_TREND_EMOJI = "📈"
 	ID_EMOJI           = "🆔"
+	RUST_EMOJI         = "🚁"
 )
 
 func InfoMessage() *discordgo.MessageEmbed {
@@ -51,6 +52,37 @@ func ReactionMessage() *discordgo.MessageEmbed {
 			},
 			{
 				Name:   SEARCH_EMOJI,
+				Value:  "Reacting with this emoji will search for all Rust servers matching your search term.",
+				Inline: false,
+			},
+		},
+	}
+}
+
+func RoleMessage() *discordgo.MessageEmbed {
+	return &discordgo.MessageEmbed{
+		Title:       "Roles",
+		URL:         "https://github.com/tonyganga/rustbot#usage",
+		Description: "The following are the available roles",
+		Color:       0x93C54B,
+		Fields: []*discordgo.MessageEmbedField{
+			{
+				Name:   UPWARD_TREND_EMOJI,
+				Value:  "Reacting with this emoji will return the top 25 ranked Rust servers on BattleMetrics.",
+				Inline: false,
+			},
+			{
+				Name:   ID_EMOJI,
+				Value:  "Reacting with this emoji will lookup the ID you provided and show you detailed information about the Rust server.",
+				Inline: false,
+			},
+			{
+				Name:   SEARCH_EMOJI,
+				Value:  "Reacting with this emoji will search for all Rust servers matching your search term.",
+				Inline: false,
+			},
+			{
+				Name:   RUST_EMOJI,
 				Value:  "Reacting with this emoji will search for all Rust servers matching your search term.",
 				Inline: false,
 			},
